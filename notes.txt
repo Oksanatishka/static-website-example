@@ -1,0 +1,48 @@
+Resources:
+- Backend part https://www.toptal.com/nodejs/gatsby-js-node-js-static-site-generator-pt-1
+- Frontend part https://www.toptal.com/front-end/gatsby-js-node-js-static-site-generator-pt-2
+- Express https://expressjs.com/en/starter/hello-world.html
+- Mongoose https://mongoosejs.com/docs/index.html
+
+-------------------------- AWS Lambda & AWS CloudWatch --------------------------
+Our application will sleep periodically: “When someone accesses the app, the dyno manager will automatically 
+wake up the web dyno to run the web process type.” So, we can wake up it via AWS Lambda and AWS CloudWatch.
+This part is not mandatory if your application won’t sleep. 
+
+You can create a cron schedule on AWS CloudWatch 10 minutes before your daily update and 
+bind it as a trigger to your GET method in AWS Lambda.
+
+
+-------------------------- 1. back-end application -------------------------- 
+- written in Node.js 
+- all communications will be over REST APIs
+
+First, we will start by implementing a simple REST API back end that exposes the CRUD operations 
+of the repository collection in our MongoDB. Then we will schedule a cron job that consumes GitHub API v4 (GraphQL) 
+in order to update documents in this collection. Then we will deploy all this to the Heroku cloud. Finally, 
+we’ll trigger a rebuild of the front end at the end of our cron job.
+
+Backend implementation will be split into 2 tasks:
+1) preparing REST API endpoints and bind them to our repository collection. 
+    - use Express for our web application framework 
+    - use Mongoose for our MongoDB connection. 
+
+2) implementing a cron job that consumes GitHub API and updates the collection.
+
+
+Project Structure
+- env.config.js is the environment variables configuration file
+- routes.config.js is for mapping rest endpoints
+- repository.controller.js contains methods to work on our repository model
+- repository.model.js contains the MongoDB schema of repository and CRUD operations
+- index.js is an initializer class
+- package.json contains dependencies and project properties
+
+Run application:
+> node index.js
+
+
+-------------------------- 2. front-end application -------------------------- 
+We will focus on the implementation of the createPages API. We will gather all repositories from the back end and 
+will generate a single home page that contains a list of all repositories, plus a page for each repository document 
+returned. Then we’ll deploy our front end to Netlify.
